@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cute Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      scrollbar-width: thin;
+      scrollbar-color: #69bbff transparent;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #69bbff;
+      border-radius: 10px;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Quicksand', sans-serif;
+      background: url('https://i.pinimg.com/736x/44/9b/78/449b78845b73922a46532ebbe88efa2d.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+
+    /* Mobile View: Change Background */
+    @media (max-width: 768px) {
+      body {
+        background: url('https://i.pinimg.com/736x/f2/d3/89/f2d389f00944d06a7e59cccbaa56a197.jpg') no-repeat center center fixed;
+        background-size: cover;
+      }
+    }
+
+    .folder-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #69bbff;
+      border: none;
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 2px 4px 10px rgba(0,0,0,0.3);
+      transition: background 0.3s;
+    }
+
+    .folder-btn:hover {
+      background-color: #69bbff;
+    }
+
+    .modal, .gallery-box, #imageViewModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-content, .gallery-content {
+      background-color: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 25px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 700px;
+      max-height: 90%;
+      overflow-y: auto;
+      border: 2px solid rgba(105, 187, 255, 0.55);
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #fff;
+      font-size: 24px;
+    }
+
+    h2 {
+      color: #fff0f5;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .category {
+      background-color: rgba(255, 255, 255, 0.12);
+      margin: 8px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s;
+    }
+
+    .category:hover {
+      background-color: rgba(185, 223, 255, 0.5);
+    }
+
+    .category button {
+      font-size: 10px;
+      background-color: #0a7bd8;
+      color: white;
+      padding: 4px 6px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .add-category, .add-image {
+      margin-top: 15px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 8px;
+      border-radius: 10px;
+      border: none;
+    }
+
+    input[type="file"] {
+      background-color: #65b3f4;
+      color: white;
+      padding: 8px;
+      border-radius: 10px;
+      border: none;
+      font-family: inherit;
+    }
+
+    button {
+      padding: 8px 12px;
+      font-family: inherit;
+      background-color: #89d1fb;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: rgba(105, 187, 255, 0.61);
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .image-box {
+      position: relative;
+      transition: transform 0.3s;
+    }
+
+    .image-box img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border: 3px solid rgba(105, 187, 255, 0.5);
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .remove-img {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: #69bbff;
+      border: none;
+      color: white;
+      font-size: 10px;
+      padding: 3px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #imageViewModal {
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #imageViewModal img {
+      max-width: 95vw;
+      max-height: 90vh;
+      border: 4px solid #69bbff;
+      border-radius: 12px;
+      object-fit: contain;
+      background: #ffffff;
+    }
+
+    #imageViewModal span {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 40px;
+      color: #697eff;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    #muteButton {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background-color: #69bbff;
+      padding: 10px 15px;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      font-size: 16px;
+    }
+
+    #muteButton:hover {
+      background-color: rgba(105, 187, 255, 0.51);
+    }
+  </style>
+</head>
+<body>
+
+  <button class="folder-btn" onclick="openModal()">📁 My Portfolio</button>
+
+  <!-- Category Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">×</span>
+      <h2>Categories</h2>
+      <div id="categoryList"></div>
+      <div class="add-category">
+        <input type="text" id="newCategoryInput" placeholder="New category name" />
+        <button onclick="addCategory()">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="bgMusic" autoplay loop>
+    <source src="ytmp3free.cc_yung-kai-blue-with-minnie-official-audio-youtubemp3free.org.mp3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Gallery Modal -->
+  <div id="gallery" class="gallery-box">
+    <div class="gallery-content">
+      <span class="close-btn" onclick="closeGallery()">×</span>
+      <h2 id="galleryTitle"></h2>
+      <div class="add-image">
+        <input type="file" id="imageInput" accept="image/*" multiple />
+        <button onclick="addImage()">Add Image</button>
+      </div>
+      <div id="imageGrid" class="image-grid"></div>
+    </div>
+  </div>
+
+  <!-- Image View Modal -->
+  <div id="imageViewModal">
+    <span onclick="closeImageView()">×</span>
+    <img id="fullImage" src="" alt="Full View" />
+  </div>
+
+  <!-- Mute Button -->
+  <button id="muteButton" onclick="toggleMute()">Mute</button>
+
+  <script>
+    const modal = document.getElementById('modal');
+    const gallery = document.getElementById('gallery');
+    const categoryList = document.getElementById('categoryList');
+    const newCategoryInput = document.getElementById('newCategoryInput');
+    const galleryTitle = document.getElementById('galleryTitle');
+    const imageGrid = document.getElementById('imageGrid');
+    const imageInput = document.getElementById('imageInput');
+    const imageViewModal = document.getElementById('imageViewModal');
+    const fullImage = document.getElementById('fullImage');
+    const bgMusic = document.getElementById('bgMusic');
+    const muteButton = document.getElementById('muteButton');
+
+    let categories = {};
+    let currentCategory = '';
+
+    function loadData() {
+      const saved = localStorage.getItem('portfolioData');
+      if (saved) {
+        categories = JSON.parse(saved);
+      } else {
+        categories = { 'Design': [], 'Development': [] };
+        saveData();
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem('portfolioData', JSON.stringify(categories));
+    }
+
+    function openModal() {
+      renderCategories();
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+    }
+
+    function renderCategories() {
+      categoryList.innerHTML = '';
+      for (let cat in categories) {
+        const div = document.createElement('div');
+        div.className = 'category';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = cat;
+        nameSpan.onclick = () => openGallery(cat);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'X';
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation();
+          if (confirm(`Delete category "${cat}"?`)) {
+            delete categories[cat];
+            saveData();
+            renderCategories();
+          }
+        };
+
+        div.appendChild(nameSpan);
+        div.appendChild(deleteBtn);
+        categoryList.appendChild(div);
+      }
+    }
+
+    function addCategory() {
+      const name = newCategoryInput.value.trim();
+      if (name && !categories[name]) {
+        categories[name] = [];
+        newCategoryInput.value = '';
+        saveData();
+        renderCategories();
+      }
+    }
+
+    function openGallery(cat) {
+      currentCategory = cat;
+      galleryTitle.textContent = cat;
+      renderImages();
+      modal.style.display = 'none';
+      gallery.style.display = 'flex';
+    }
+
+    function closeGallery() {
+      gallery.style.display = 'none';
+      imageInput.value = '';
+    }
+
+    function addImage() {
+      const files = imageInput.files;
+      if (!files.length) return;
+
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          categories[currentCategory].push(e.target.result);
+          saveData();
+          renderImages();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      imageInput.value = '';
+    }
+
+    function renderImages() {
+      imageGrid.innerHTML = '';
+      categories[currentCategory].forEach((src, index) => {
+        const box = document.createElement('div');
+        box.className = 'image-box';
+
+        const img = document.createElement('img');
+        img.src = src;
+        img.onclick = () => viewImage(src);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-img';
+        removeBtn.textContent = 'X';
+        removeBtn.onclick = () => {
+          categories[currentCategory].splice(index, 1);
+          saveData();
+          renderImages();
+        };
+
+        box.appendChild(img);
+        box.appendChild(removeBtn);
+        imageGrid.appendChild(box);
+      });
+    }
+
+    function viewImage(src) {
+      fullImage.src = src;
+      imageViewModal.style.display = 'flex';
+    }
+
+    function closeImageView() {
+      imageViewModal.style.display = 'none';
+      fullImage.src = '';
+    }
+
+    function toggleMute() {
+      if (bgMusic.muted) {
+        bgMusic.muted = false;
+        muteButton.textContent = 'Mute';
+      } else {
+        bgMusic.muted = true;
+        muteButton.textContent = 'Unmute';
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
